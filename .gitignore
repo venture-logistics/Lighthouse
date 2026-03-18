@@ -1,1 +1,9 @@
+lib/
+assets/
+uploads/
+install/
 includes/config.php
+includes/functions.php
+includes/header.php
+includes/invoice_email.php
+includes/licence.json

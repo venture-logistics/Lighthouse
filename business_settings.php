@@ -185,6 +185,69 @@ require_once 'includes/sidebar.php';
                                 </div>
                             </div>
 
+                            <!-- Banking Integration -->
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h5 class="card-title mb-0">Banking Integration</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label">Your Bank Provider</label>
+                                            <select class="form-select" name="bank_provider">
+                                                <option value="">— Select your bank —</option>
+                                                <option value="revolut_business" <?php echo ($settings['bank_provider'] ?? '') === 'revolut_business' ? 'selected' : ''; ?>>
+                                                    Revolut Business
+                                                </option>
+                                                <option value="tide" <?php echo ($settings['bank_provider'] ?? '') === 'tide' ? 'selected' : ''; ?>>
+                                                    Tide
+                                                </option>
+                                                <option value="monzo_business" <?php echo ($settings['bank_provider'] ?? '') === 'monzo_business' ? 'selected' : ''; ?>>
+                                                    Monzo Business
+                                                </option>
+                                                <option value="barclays" <?php echo ($settings['bank_provider'] ?? '') === 'barclays' ? 'selected' : ''; ?>>
+                                                    Barclays
+                                                </option>
+                                                <option value="hsbc" <?php echo ($settings['bank_provider'] ?? '') === 'hsbc' ? 'selected' : ''; ?>>
+                                                    HSBC
+                                                </option>
+                                                <option value="natwest" <?php echo ($settings['bank_provider'] ?? '') === 'natwest' ? 'selected' : ''; ?>>
+                                                    NatWest
+                                                </option>
+                                                <option value="lloyds" <?php echo ($settings['bank_provider'] ?? '') === 'lloyds' ? 'selected' : ''; ?>>
+                                                    Lloyds
+                                                </option>
+                                                <option value="starling" <?php echo ($settings['bank_provider'] ?? '') === 'starling' ? 'selected' : ''; ?>>
+                                                    Starling Bank
+                                                </option>
+                                            </select>
+                                            <small class="text-muted">
+                                                This tells Lighthouse how to read your bank CSV exports
+                                            </small>
+                                        </div>
+                                        <div class="col-md-6 d-flex align-items-center">
+                                            <?php 
+                                            $provider = $settings['bank_provider'] ?? '';
+                                            if ($provider): ?>
+                                                <div class="alert alert-info mb-0 w-100">
+                                                    <?php if ($provider === 'revolut_business'): ?>
+                                                    Export from: <strong>Revolut Business → Accounts → Export</strong>
+                                                    <?php elseif ($provider === 'tide'): ?>
+                                                        Export from: <strong>Tide → Transactions → Export CSV</strong>
+                                                    <?php elseif ($provider === 'monzo_business'): ?>
+                                                        Export from: <strong>Monzo → Statements → Download CSV</strong>
+                                                    <?php elseif ($provider === 'starling'): ?>
+                                                        Export from: <strong>Starling → Spaces → Download CSV</strong>
+                                                    <?php else: ?>
+                                                        Export your transactions as CSV from your online banking
+                                                    <?php endif; ?>
+                                                </div>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>                            
+
                             <!-- Invoice Settings -->
                             <div class="card mb-4">
                                 <div class="card-header">
