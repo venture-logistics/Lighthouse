@@ -174,7 +174,7 @@ require_once 'includes/sidebar.php';
                                     <div class="card-body">
                                         <div class="text-muted small">Total Debits</div>
                                         <div class="fs-4 fw-bold text-danger">
-                                            £<?php echo number_format($summary['total_debits'], 2); ?>
+                                            £<?php echo number_format($summary['total_debits'] ?? 0, 2); ?>
                                         </div>
                                     </div>
                                 </div>
@@ -194,7 +194,7 @@ require_once 'includes/sidebar.php';
                                     <div class="card-body">
                                         <div class="text-muted small">Unreconciled</div>
                                         <div class="fs-4 fw-bold text-warning">
-                                            <?php echo number_format($summary['unreconciled']); ?>
+                                            <?php echo number_format($summary['unreconciled'] ?? 0); ?>
                                         </div>
                                     </div>
                                 </div>
