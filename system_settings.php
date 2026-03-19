@@ -7,15 +7,15 @@ require_once 'version.php';
 if (!isset($updateStatus)) {
     $updateStatus = [
         'update_available' => false,
-        'latest_version' => '1.19.6',
-        'current_version' => '1.19.6'
+        'latest_version'   => APP_VERSION,
+        'current_version'  => APP_VERSION
     ];
 }
 
 // Use update status already fetched by config.php
 $update_available = $updateStatus['update_available'];
-$latest_version = $updateStatus['latest_version'];
-$current_version = $updateStatus['current_version'];
+$latest_version   = $updateStatus['latest_version'];
+$current_version  = APP_VERSION; // ← Always use version.php, never the DB
 
 $error = '';
 $success = '';
@@ -43,27 +43,6 @@ if (!empty($licence_data['expires_at'])) {
     $is_valid = ($expires_date > $now);
     $interval = $now->diff($expires_date);
     $days_remaining = $interval->days;
-}
-
-// Check for update from GitHub API
-function checkForUpdate() {
-    $context = stream_context_create(['http' => ['header' => 'User-Agent: LighthouseApp']]);
-    $response = @file_get_contents('https://api.github.com/repos/venture-logistics/lighthouse/releases/latest', false, $context);
-    if (!$response) return null;
-    return json_decode($response, true);
-}
-
-$latest = checkForUpdate();
-$update_available = false;
-$latest_version = null;
-$download_url = null;
-$changelog = null;
-
-if ($latest && isset($latest['tag_name'])) {
-    $latest_version = ltrim($latest['tag_name'], 'v');
-    $update_available = version_compare($latest_version, APP_VERSION, '>');
-    $download_url = $latest['assets'][0]['browser_download_url'] ?? null;
-    $changelog = $latest['body'] ?? null;
 }
 
 // Handle licence verification POST
