@@ -1,7 +1,8 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\includes"
   ],
-  "SelectedNode": "\\create_admin.php",
+  "SelectedNode": "\\system_settings.php",
   "PreviewInSolutionExplorer": false
 }

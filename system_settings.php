@@ -3,6 +3,20 @@ require_once 'includes/config.php';
 require_once 'includes/functions.php';
 require_once 'version.php';
 
+// Safe fallback in case $updateStatus wasn't set by config.php
+if (!isset($updateStatus)) {
+    $updateStatus = [
+        'update_available' => false,
+        'latest_version' => '1.19.6',
+        'current_version' => '1.19.6'
+    ];
+}
+
+// Use update status already fetched by config.php
+$update_available = $updateStatus['update_available'];
+$latest_version = $updateStatus['latest_version'];
+$current_version = $updateStatus['current_version'];
+
 $error = '';
 $success = '';
 $licence_file = 'includes/licence.json';
@@ -311,14 +325,14 @@ include 'includes/sidebar.php';
                             <?php endforeach; ?>
                         </div>
                     </div>
-                    
+
                     <!-- Version Card -->
                     <div class="card mt-3">
                         <div class="card-header fs-5">Version</div>
                         <div class="card-body">
                             <div class="d-flex align-items-center justify-content-between py-2 border-bottom border-secondary mb-3">
                                 <span class="text-muted small">Installed</span>
-                                <span class="badge bg-secondary h6 mb-0"><?= APP_VERSION ?></span>
+                                <span class="badge bg-secondary h6 mb-0"><?= htmlspecialchars($current_version) ?></span>
                             </div>
 
                             <?php if (!$is_valid): ?>
@@ -329,7 +343,7 @@ include 'includes/sidebar.php';
                             <?php elseif ($update_available): ?>
                                 <div class="d-flex align-items-center justify-content-between py-2 border-bottom border-secondary mb-3">
                                     <span class="text-muted small">Latest</span>
-                                    <span class="badge bg-warning text-dark h6 mb-0"><?= $latest_version ?></span>
+                                    <span class="badge bg-warning text-dark h6 mb-0"><?= htmlspecialchars($latest_version) ?></span>
                                 </div>
 
                                 <?php if ($changelog): ?>
@@ -338,7 +352,7 @@ include 'includes/sidebar.php';
 
                                 <form method="post" action="">
                                     <button type="submit" name="apply_update" class="btn btn-warning w-100"
-                                        onclick="return confirm('Apply update to v<?= $latest_version ?>?')">
+                                        onclick="return confirm('Apply update to v<?= htmlspecialchars($latest_version) ?>?')">
                                         <i class="bi bi-download me-1"></i> Apply Update
                                     </button>
                                 </form>

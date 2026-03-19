@@ -3,12 +3,12 @@
   "WorkspaceRootPath": "C:\\sss\\apache\\htdocs\\lighthouse\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\sss\\apache\\htdocs\\lighthouse\\includes\\footer.php||{3D2461EC-8045-4AA9-ABFB-812292AE795D}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:includes\\footer.php||{3D2461EC-8045-4AA9-ABFB-812292AE795D}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\sss\\apache\\htdocs\\lighthouse\\create_admin.php||{3D2461EC-8045-4AA9-ABFB-812292AE795D}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:create_admin.php||{3D2461EC-8045-4AA9-ABFB-812292AE795D}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\sss\\apache\\htdocs\\lighthouse\\includes\\footer.php||{3D2461EC-8045-4AA9-ABFB-812292AE795D}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:includes\\footer.php||{3D2461EC-8045-4AA9-ABFB-812292AE795D}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\sss\\apache\\htdocs\\lighthouse\\dashboard.php||{3D2461EC-8045-4AA9-ABFB-812292AE795D}",
@@ -26,7 +26,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 5,
           "Children": [
             {
               "$type": "Bookmark",
@@ -38,16 +38,15 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "footer.php",
               "DocumentMoniker": "C:\\sss\\apache\\htdocs\\lighthouse\\includes\\footer.php",
               "RelativeDocumentMoniker": "includes\\footer.php",
               "ToolTip": "C:\\sss\\apache\\htdocs\\lighthouse\\includes\\footer.php",
               "RelativeToolTip": "includes\\footer.php",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAACFAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAlAAAAAAAAAA==",
               "Icon": "89320d42-7831-4f47-839a-c227d3a60919.000001|",
-              "WhenOpened": "2026-03-17T03:58:38.19Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-03-17T03:58:38.19Z"
             },
             {
               "$type": "Document",
@@ -59,8 +58,7 @@
               "RelativeToolTip": "dashboard.php",
               "ViewState": "AgIAACABAAAAAAAAAAAAAC0BAAAAAAAAAAAAAA==",
               "Icon": "89320d42-7831-4f47-839a-c227d3a60919.000001|",
-              "WhenOpened": "2026-03-16T21:00:58.795Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-03-16T21:00:58.795Z"
             },
             {
               "$type": "Document",
@@ -72,18 +70,17 @@
               "RelativeToolTip": "customer_view.php",
               "ViewState": "AgIAAGkAAAAAAAAAAAAAAJcAAAAAAAAAAAAAAA==",
               "Icon": "89320d42-7831-4f47-839a-c227d3a60919.000001|",
-              "WhenOpened": "2026-03-16T20:59:16.412Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-03-16T20:59:16.412Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "create_admin.php",
               "DocumentMoniker": "C:\\sss\\apache\\htdocs\\lighthouse\\create_admin.php",
               "RelativeDocumentMoniker": "create_admin.php",
               "ToolTip": "C:\\sss\\apache\\htdocs\\lighthouse\\create_admin.php",
               "RelativeToolTip": "create_admin.php",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAABTAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB8AAAAyAAAAAAAAAA==",
               "Icon": "89320d42-7831-4f47-839a-c227d3a60919.000001|",
               "WhenOpened": "2026-03-16T20:58:13.282Z",
               "EditorCaption": ""
