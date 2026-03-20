@@ -1,3 +1,3 @@
 <?php
-define('APP_VERSION', '1.19.9');
-define('APP_RELEASE_DATE', '19-03-2026');
+define('APP_VERSION', '1.19.10');
+define('APP_RELEASE_DATE', '20-03-2026');

@@ -1,4 +1,5 @@
 <?php
+
 require_once 'includes/config.php';
 require_once 'includes/functions.php';
 require_once 'version.php';
@@ -80,10 +81,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email'])) {
             $result = json_decode($response, true);
             if ($result['valid']) {
                 $licence_data = [
-                    'valid' => true,
-                    'expires_at' => $result['expires_at'],
-                    'email' => $email,
-                    'verified_at' => date('Y-m-d H:i:s')
+                    'valid'         => true,
+                    'expires_at'    => $result['expires_at'],
+                    'email'         => $email,
+                    'purchase_code' => $purchase_code,
+                    'verified_at'   => date('Y-m-d H:i:s')
                 ];
 
                 if (file_put_contents($licence_file, json_encode($licence_data, JSON_PRETTY_PRINT))) {
