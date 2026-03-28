@@ -1,8 +1,8 @@
 <?php
-
 require_once 'includes/config.php';
 require_once 'includes/functions.php';
 require_once 'version.php';
+require_login();
 
 // Safe fallback in case $updateStatus wasn't set by config.php
 if (!isset($updateStatus)) {

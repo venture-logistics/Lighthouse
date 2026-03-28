@@ -11,6 +11,8 @@ try {
     $coa_id = !empty($_POST['coa_id']) ? (int) $_POST['coa_id'] : null;
     $status = $_POST['status'] ?? 'uncategorised';
     $notes = $_POST['notes'] ?? null;
+    $tax_rate   = !empty($_POST['tax_rate']) ? (float) $_POST['tax_rate'] : 0;
+    $tax_amount = round($tx['amount'] * ($tax_rate / 100), 2); // calculated server-side
     $no_receipt = isset($_POST['no_receipt']) ? 1 : 0;
     $no_receipt_reason = trim($_POST['no_receipt_reason'] ?? '');
 
@@ -93,7 +95,9 @@ try {
             notes        = ?,
             receipt_path = ?,
             reconciled   = ?,
-            no_receipt   = ?
+            no_receipt   = ?,
+            tax_rate     = ?,
+            tax_amount   = ?
         WHERE id = ? AND user_id = ?
     ");
     $stmt->execute([
@@ -103,6 +107,8 @@ try {
         $receipt_path,
         $reconciled,
         $no_receipt,
+        $tax_rate, 
+        $tax_amount,
         $tx_id,
         $_SESSION['user_id']
     ]);

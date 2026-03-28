@@ -91,8 +91,9 @@ try {
             bt.*,
             ba.account_name,
             ba.bank_name,
-            coa.name AS coa_name,
-            coa.code AS coa_code
+            coa.name     AS coa_name,
+            coa.code     AS coa_code,
+            coa.vat_rate AS coa_vat_rate
         FROM bank_transactions bt
         LEFT JOIN bank_accounts ba      ON bt.bank_account_id = ba.id
         LEFT JOIN chart_of_accounts coa ON bt.coa_id = coa.id
@@ -174,7 +175,7 @@ require_once 'includes/sidebar.php';
                                     <div class="card-body">
                                         <div class="text-muted small">Total Debits</div>
                                         <div class="fs-4 fw-bold text-danger">
-                                            £<?php echo number_format($summary['total_debits'] ?? 0, 2); ?>
+                                            £<?php echo number_format($summary['total_debits'], 2); ?>
                                         </div>
                                     </div>
                                 </div>
@@ -194,7 +195,7 @@ require_once 'includes/sidebar.php';
                                     <div class="card-body">
                                         <div class="text-muted small">Unreconciled</div>
                                         <div class="fs-4 fw-bold text-warning">
-                                            <?php echo number_format($summary['unreconciled'] ?? 0); ?>
+                                            <?php echo number_format($summary['unreconciled']); ?>
                                         </div>
                                     </div>
                                 </div>
@@ -342,16 +343,24 @@ require_once 'includes/sidebar.php';
                                                                 </div>
                                                             <?php endif; ?>
                                                         </td>
-                                                        <td class="text-end text-nowrap">
-                                                            <?php if ($tx['tax_rate'] > 0): ?>
-                                                                <span class="text-muted small">
-                                                                    <?php echo $tx['tax_rate']; ?>%
-                                                                    <br>£<?php echo number_format($tx['tax_amount'], 2); ?>
-                                                                </span>
-                                                            <?php else: ?>
-                                                                <span class="text-muted small">—</span>
-                                                            <?php endif; ?>
-                                                        </td>
+                                                        
+                                                        
+<td class="text-end text-nowrap">
+    <?php
+    $vat_rate = (float)($tx['coa_vat_rate'] ?? 0);
+    if ($vat_rate > 0):
+        $vat_amount = round(abs($tx['amount']) * $vat_rate / (100 + $vat_rate), 2);
+    ?>
+        <span class="text-muted small">
+            <?php echo $vat_rate; ?>%<br>
+            £<?php echo number_format($vat_amount, 2); ?>
+        </span>
+    <?php else: ?>
+        <span class="text-muted small">—</span>
+    <?php endif; ?>
+</td>
+                                                        
+                                                        
                                                         <td>
                                                             <?php if ($tx['coa_name']): ?>
                                                                 <span class="small">
@@ -400,7 +409,8 @@ require_once 'includes/sidebar.php';
                                                                     data-status="<?php echo $tx['status']; ?>"
                                                                     data-reconciled="<?php echo $tx['reconciled']; ?>"
                                                                     data-notes="<?php echo htmlspecialchars($tx['notes'] ?? ''); ?>"
-                                                                    data-receipt="<?php echo htmlspecialchars($tx['receipt_path'] ?? ''); ?>">
+                                                                    data-receipt="<?php echo htmlspecialchars($tx['receipt_path'] ?? ''); ?>"
+                                                                    data-tax-rate="<?php echo $tx['tax_rate'] ?? 0; ?>">
                                                                 <i class="bi bi-tag"></i>
                                                             </button>
                                                         </td>
@@ -464,6 +474,13 @@ require_once 'includes/sidebar.php';
                             ?>
                         </select>
                     </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">VAT Rate (%)</label>
+                        <input type="number" name="tax_rate" id="modal_tax_rate" 
+                               class="form-control" step="0.01" min="0" max="100" value="0">
+                        <div class="form-text" id="modal_vat_display"></div>
+                    </div>                    
 
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Status</label>
@@ -620,6 +637,22 @@ require_once 'includes/sidebar.php';
 </div>
 
 <script>
+
+function updateVatDisplay(rate, gross) {
+    const vatAmt = (gross * rate / (100 + rate)).toFixed(2);
+    const net    = (gross - vatAmt).toFixed(2);
+    const el     = document.getElementById('modal_vat_display');
+    el.textContent = rate > 0 
+        ? `VAT: £${vatAmt} — Net: £${net}` 
+        : 'No VAT';
+}
+
+// Wire up VAT input ONCE, outside the modal handler
+document.getElementById('modal_tax_rate').addEventListener('input', function () {
+    const amount = parseFloat(document.getElementById('modal_tx_amount_raw').value);
+    updateVatDisplay(parseFloat(this.value || 0), amount);
+});
+
 document.getElementById('categoriseModal').addEventListener('show.bs.modal', function (e) {
     const btn = e.relatedTarget;
 
@@ -629,17 +662,11 @@ document.getElementById('categoriseModal').addEventListener('show.bs.modal', fun
         (btn.dataset.type === 'debit' ? '-' : '+') + '£' +
         parseFloat(btn.dataset.amount).toFixed(2);
     document.getElementById('modal_notes').value       = btn.dataset.notes;
+    document.getElementById('modal_coa').value         = btn.dataset.coa    || '';
+    document.getElementById('modal_status').value      = btn.dataset.status || 'uncategorised';
 
-    // COA dropdown
-    document.getElementById('modal_coa').value    = btn.dataset.coa    || '';
-    // Status dropdown
-    document.getElementById('modal_status').value = btn.dataset.status || 'uncategorised';
-
-    // Receipt — show existing link or hide the block
     const receiptBlock = document.getElementById('modal_receipt_existing');
     const receiptLink  = document.getElementById('modal_receipt_link');
-    const receiptInput = document.getElementById('modal_receipt');
-
     if (btn.dataset.receipt) {
         receiptBlock.classList.remove('d-none');
         receiptLink.href = btn.dataset.receipt;
@@ -647,10 +674,17 @@ document.getElementById('categoriseModal').addEventListener('show.bs.modal', fun
         receiptBlock.classList.add('d-none');
         receiptLink.href = '#';
     }
+    document.getElementById('modal_receipt').value = '';
 
-    // Clear the file input each time modal opens
-    receiptInput.value = '';
+    // Store raw amount for the VAT input listener to read
+    document.getElementById('modal_tx_amount_raw').value = btn.dataset.amount;
+
+    // Pre-fill VAT
+    const taxRate = parseFloat(btn.dataset.taxRate || 0);
+    document.getElementById('modal_tax_rate').value = taxRate;
+    updateVatDisplay(taxRate, parseFloat(btn.dataset.amount));
 });
+
 </script>
 
 <?php require_once 'includes/footer.php'; ?>
