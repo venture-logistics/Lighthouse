@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Mar 14, 2026 at 11:52 AM
+-- Generation Time: Mar 28, 2026 at 03:04 AM
 -- Server version: 9.6.0
 -- PHP Version: 8.3.29
 
@@ -32,6 +32,7 @@ CREATE TABLE `bank_accounts` (
   `user_id` int NOT NULL,
   `account_name` varchar(100) NOT NULL,
   `bank_name` varchar(100) DEFAULT NULL,
+  `bank_provider` varchar(50) DEFAULT NULL,
   `account_number` varchar(20) DEFAULT NULL,
   `sort_code` varchar(10) DEFAULT NULL,
   `coa_id` int NOT NULL,
@@ -106,6 +107,7 @@ CREATE TABLE `business_settings` (
   `from_name` varchar(255) DEFAULT NULL,
   `email_template` text,
   `bank_name` varchar(255) DEFAULT NULL,
+  `bank_provider` varchar(50) DEFAULT NULL,
   `account_name` varchar(255) DEFAULT NULL,
   `sort_code` varchar(10) DEFAULT NULL,
   `account_number` varchar(20) DEFAULT NULL,
@@ -136,61 +138,62 @@ CREATE TABLE `chart_of_accounts` (
   `is_system` tinyint(1) DEFAULT '0',
   `is_active` tinyint(1) DEFAULT '1',
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `vat_rate` decimal(5,2) NOT NULL DEFAULT '0.00'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `chart_of_accounts`
 --
 
-INSERT INTO `chart_of_accounts` (`id`, `code`, `name`, `type`, `description`, `is_system`, `is_active`, `created_at`, `updated_at`) VALUES
-(1, '1000', 'Current Account', 'asset', NULL, 1, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37'),
-(2, '1010', 'Savings Account', 'asset', NULL, 0, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37'),
-(3, '1020', 'Petty Cash', 'asset', NULL, 0, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37'),
-(4, '1100', 'Accounts Receivable', 'asset', NULL, 1, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37'),
-(5, '1200', 'VAT Receivable', 'asset', NULL, 1, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37'),
-(6, '2000', 'Accounts Payable', 'liability', NULL, 1, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37'),
-(7, '2100', 'VAT Payable', 'liability', NULL, 1, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37'),
-(8, '2200', 'PAYE Payable', 'liability', NULL, 0, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37'),
-(9, '2300', 'Corporation Tax Payable', 'liability', NULL, 0, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37'),
-(10, '2400', 'Directors Loan Account', 'liability', NULL, 0, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37'),
-(11, '3000', 'Share Capital', 'equity', NULL, 1, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37'),
-(12, '3100', 'Retained Earnings', 'equity', NULL, 1, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37'),
-(13, '4000', 'Sales - General', 'income', NULL, 1, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37'),
-(14, '4010', 'Sales - Services', 'income', NULL, 0, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37'),
-(15, '4020', 'Sales - Products', 'income', NULL, 0, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37'),
-(16, '4900', 'Other Income', 'income', NULL, 0, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37'),
-(17, '5000', 'Cost of Sales', 'expense', 'Cost of Sales', 0, 1, '2026-03-02 08:35:37', '2026-03-08 03:12:37'),
-(18, '6000', 'Salaries & Wages', 'expense', NULL, 0, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37'),
-(19, '6010', 'Employer NI', 'expense', NULL, 0, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37'),
-(20, '6100', 'Rent & Rates', 'expense', NULL, 0, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37'),
-(21, '6200', 'Utilities', 'expense', NULL, 0, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37'),
-(22, '6300', 'Telephone & Internet', 'expense', NULL, 0, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37'),
-(23, '6400', 'Software & Subscriptions', 'expense', NULL, 0, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37'),
-(24, '6500', 'Office Supplies', 'expense', NULL, 0, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37'),
-(25, '6600', 'Travel & Subsistence', 'expense', NULL, 0, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37'),
-(26, '6700', 'Motor Expenses', 'expense', NULL, 0, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37'),
-(27, '6800', 'Marketing & Advertising', 'expense', NULL, 0, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37'),
-(28, '6900', 'Professional Fees', 'expense', NULL, 0, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37'),
-(29, '7000', 'Bank Charges', 'expense', NULL, 0, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37'),
-(30, '7100', 'Insurance', 'expense', NULL, 0, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37'),
-(31, '7200', 'Depreciation', 'expense', NULL, 0, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37'),
-(32, '7900', 'Sundry Expenses', 'expense', NULL, 0, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37'),
-(33, '6001', 'Waste Transfer', 'expense', 'Charge to tip customer waste', 0, 1, '2026-03-02 18:04:58', '2026-03-05 22:18:34'),
-(34, '6002', 'General Expenses', 'expense', 'General expense not covered elsewhere', 0, 1, '2026-03-02 18:30:26', '2026-03-05 22:19:29'),
-(35, '6004', 'Food and Drink', 'expense', 'Breakfast, Lunch and Dinner when on the road', 0, 1, '2026-03-02 18:39:36', '2026-03-05 22:19:45'),
-(36, '6005', 'Diesel', 'expense', 'Diesel', 0, 1, '2026-03-02 18:55:39', '2026-03-05 22:19:59'),
-(37, '6006', 'Hosting and Domains', 'expense', 'Website hosting and domains', 0, 1, '2026-03-02 19:34:17', '2026-03-05 22:20:11'),
-(38, '6007', 'Penalties and Fines', 'expense', 'Driving in London Tax!', 0, 1, '2026-03-02 19:37:00', '2026-03-05 22:20:26'),
-(39, '6008', 'Tolls & Congestion', 'expense', 'Tolls, freash air zones and congestion charges', 0, 1, '2026-03-02 19:40:07', '2026-03-05 22:20:37'),
-(40, '6009', 'Short Term Loan', 'expense', 'Short term loan from friend or HLS', 0, 1, '2026-03-03 06:42:03', '2026-03-05 22:20:47'),
-(41, '6011', 'Bookkeeping', 'expense', 'Pay daughter to help with bookkeeping', 0, 1, '2026-03-03 07:24:25', '2026-03-05 22:22:17'),
-(42, '6012', 'Gifts', 'expense', 'Customer thank you gifts', 0, 1, '2026-03-03 08:17:05', '2026-03-05 22:22:36'),
-(43, '6013', 'Research and Development', 'expense', 'Developing software', 0, 1, '2026-03-03 10:53:17', '2026-03-05 22:22:59'),
-(44, '1500', 'Motor Vehicles', 'asset', NULL, 0, 1, '2026-03-04 05:28:07', '2026-03-04 05:28:07'),
-(45, '1510', 'Computer Equipment', 'asset', NULL, 0, 1, '2026-03-04 05:28:07', '2026-03-04 05:28:07'),
-(46, '1590', 'Accumulated Depreciation - Motor Vehicles', 'asset', NULL, 0, 1, '2026-03-04 05:28:07', '2026-03-04 05:28:07'),
-(47, '1591', 'Accumulated Depreciation - Computer Equipment', 'asset', NULL, 0, 1, '2026-03-04 05:28:07', '2026-03-04 05:28:07');
+INSERT INTO `chart_of_accounts` (`id`, `code`, `name`, `type`, `description`, `is_system`, `is_active`, `created_at`, `updated_at`, `vat_rate`) VALUES
+(1, '1000', 'Current Account', 'asset', NULL, 1, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37', 0.00),
+(2, '1010', 'Savings Account', 'asset', NULL, 0, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37', 0.00),
+(3, '1020', 'Petty Cash', 'asset', NULL, 0, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37', 0.00),
+(4, '1100', 'Accounts Receivable', 'asset', NULL, 1, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37', 0.00),
+(5, '1200', 'VAT Receivable', 'asset', NULL, 1, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37', 0.00),
+(6, '2000', 'Accounts Payable', 'liability', NULL, 1, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37', 0.00),
+(7, '2100', 'VAT Payable', 'liability', NULL, 1, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37', 0.00),
+(8, '2200', 'PAYE Payable', 'liability', NULL, 0, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37', 0.00),
+(9, '2300', 'Corporation Tax Payable', 'liability', NULL, 0, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37', 0.00),
+(10, '2400', 'Directors Loan Account', 'liability', NULL, 0, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37', 0.00),
+(11, '3000', 'Share Capital', 'equity', NULL, 1, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37', 0.00),
+(12, '3100', 'Retained Earnings', 'equity', NULL, 1, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37', 0.00),
+(13, '4000', 'Sales - General', 'income', NULL, 1, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37', 0.00),
+(14, '4010', 'Sales - Services', 'income', NULL, 0, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37', 0.00),
+(15, '4020', 'Sales - Products', 'income', NULL, 0, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37', 0.00),
+(16, '4900', 'Other Income', 'income', NULL, 0, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37', 0.00),
+(17, '5000', 'Cost of Sales', 'expense', 'Cost of Sales', 0, 1, '2026-03-02 08:35:37', '2026-03-08 03:12:37', 0.00),
+(18, '6000', 'Salaries & Wages', 'expense', NULL, 0, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37', 0.00),
+(19, '6010', 'Employer NI', 'expense', NULL, 0, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37', 0.00),
+(20, '6100', 'Rent & Rates', 'expense', NULL, 0, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37', 0.00),
+(21, '6200', 'Utilities', 'expense', NULL, 0, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37', 0.00),
+(22, '6300', 'Telephone & Internet', 'expense', NULL, 0, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37', 0.00),
+(23, '6400', 'Software & Subscriptions', 'expense', NULL, 0, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37', 0.00),
+(24, '6500', 'Office Supplies', 'expense', NULL, 0, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37', 0.00),
+(25, '6600', 'Travel & Subsistence', 'expense', NULL, 0, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37', 0.00),
+(26, '6700', 'Motor Expenses', 'expense', NULL, 0, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37', 0.00),
+(27, '6800', 'Marketing & Advertising', 'expense', NULL, 0, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37', 0.00),
+(28, '6900', 'Professional Fees', 'expense', NULL, 0, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37', 0.00),
+(29, '7000', 'Bank Charges', 'expense', NULL, 0, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37', 0.00),
+(30, '7100', 'Insurance', 'expense', NULL, 0, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37', 0.00),
+(31, '7200', 'Depreciation', 'expense', NULL, 0, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37', 0.00),
+(32, '7900', 'Sundry Expenses', 'expense', NULL, 0, 1, '2026-03-02 08:35:37', '2026-03-02 08:35:37', 0.00),
+(33, '6001', 'Waste Transfer', 'expense', 'Charge to tip customer waste', 0, 1, '2026-03-02 18:04:58', '2026-03-05 22:18:34', 0.00),
+(34, '6002', 'General Expenses', 'expense', 'General expense not covered elsewhere', 0, 1, '2026-03-02 18:30:26', '2026-03-28 03:03:35', 0.00),
+(35, '6004', 'Food and Drink', 'expense', 'Breakfast, Lunch and Dinner when on the road', 0, 1, '2026-03-02 18:39:36', '2026-03-05 22:19:45', 0.00),
+(36, '6005', 'Diesel', 'expense', 'Diesel', 0, 1, '2026-03-02 18:55:39', '2026-03-05 22:19:59', 0.00),
+(37, '6006', 'Hosting and Domains', 'expense', 'Website hosting and domains', 0, 1, '2026-03-02 19:34:17', '2026-03-05 22:20:11', 0.00),
+(38, '6007', 'Penalties and Fines', 'expense', 'Driving in London Tax!', 0, 1, '2026-03-02 19:37:00', '2026-03-05 22:20:26', 0.00),
+(39, '6008', 'Tolls & Congestion', 'expense', 'Tolls, freash air zones and congestion charges', 0, 1, '2026-03-02 19:40:07', '2026-03-05 22:20:37', 0.00),
+(40, '6009', 'Short Term Loan', 'expense', 'Short term loan from friend or HLS', 0, 1, '2026-03-03 06:42:03', '2026-03-05 22:20:47', 0.00),
+(41, '6011', 'Bookkeeping', 'expense', 'Pay daughter to help with bookkeeping', 0, 1, '2026-03-03 07:24:25', '2026-03-05 22:22:17', 0.00),
+(42, '6012', 'Gifts', 'expense', 'Customer thank you gifts', 0, 1, '2026-03-03 08:17:05', '2026-03-05 22:22:36', 0.00),
+(43, '6013', 'Research and Development', 'expense', 'Developing software', 0, 1, '2026-03-03 10:53:17', '2026-03-05 22:22:59', 0.00),
+(44, '1500', 'Motor Vehicles', 'asset', NULL, 0, 1, '2026-03-04 05:28:07', '2026-03-04 05:28:07', 0.00),
+(45, '1510', 'Computer Equipment', 'asset', NULL, 0, 1, '2026-03-04 05:28:07', '2026-03-04 05:28:07', 0.00),
+(46, '1590', 'Accumulated Depreciation - Motor Vehicles', 'asset', NULL, 0, 1, '2026-03-04 05:28:07', '2026-03-04 05:28:07', 0.00),
+(47, '1591', 'Accumulated Depreciation - Computer Equipment', 'asset', NULL, 0, 1, '2026-03-04 05:28:07', '2026-03-04 05:28:07', 0.00);
 
 -- --------------------------------------------------------
 
@@ -319,6 +322,18 @@ CREATE TABLE `notes` (
   `content` text NOT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `settings`
+--
+
+CREATE TABLE `settings` (
+  `id` int NOT NULL,
+  `setting_key` varchar(100) NOT NULL,
+  `setting_value` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -465,6 +480,13 @@ ALTER TABLE `notes`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `settings`
+--
+ALTER TABLE `settings`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `setting_key` (`setting_key`);
+
+--
 -- Indexes for table `trial_balances`
 --
 ALTER TABLE `trial_balances`
@@ -560,6 +582,12 @@ ALTER TABLE `login_logs`
 -- AUTO_INCREMENT for table `notes`
 --
 ALTER TABLE `notes`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `settings`
+--
+ALTER TABLE `settings`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --

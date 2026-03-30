@@ -163,6 +163,48 @@ try {
     }
     // -------------------------------------------------------
 
+    // -------------------------------------------------------
+    // Save VAT Settings
+    // -------------------------------------------------------
+    $is_vat_registered = isset($_POST['is_vat_registered']) ? 1 : 0;
+
+    $vat_data = [
+        'is_vat_registered' => $is_vat_registered,
+        'vat_number'        => $_POST['vat_number']      ?? null,
+        'vat_rate'          => $_POST['vat_rate']        ?? 20.00,
+        'vat_scheme'        => $_POST['vat_scheme']      ?? 'standard',
+        'vat_quarter_end'   => $_POST['vat_quarter_end'] ?? 'Mar',
+        'vat_period_start'  => !empty($_POST['vat_period_start']) ? $_POST['vat_period_start'] : null,
+        'user_id'           => $_SESSION['user_id'],
+    ];
+
+    $vat_check = $pdo->prepare("SELECT id FROM vat_settings WHERE user_id = ?");
+    $vat_check->execute([$_SESSION['user_id']]);
+    $vat_exists = $vat_check->fetch();
+
+    if ($vat_exists) {
+        $vat_stmt = $pdo->prepare("
+            UPDATE vat_settings 
+            SET is_vat_registered = :is_vat_registered,
+                vat_number        = :vat_number,
+                vat_rate          = :vat_rate,
+                vat_scheme        = :vat_scheme,
+                vat_quarter_end   = :vat_quarter_end,
+                vat_period_start  = :vat_period_start
+            WHERE user_id         = :user_id
+        ");
+    } else {
+        $vat_stmt = $pdo->prepare("
+            INSERT INTO vat_settings 
+                (user_id, is_vat_registered, vat_number, vat_rate, vat_scheme, vat_quarter_end, vat_period_start)
+            VALUES 
+                (:user_id, :is_vat_registered, :vat_number, :vat_rate, :vat_scheme, :vat_quarter_end, :vat_period_start)
+        ");
+    }
+
+    $vat_stmt->execute($vat_data);
+    // -------------------------------------------------------
+
     $_SESSION['message'] = 'Business settings saved successfully.';
 
 } catch (Exception $e) {

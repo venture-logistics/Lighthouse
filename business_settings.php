@@ -3,6 +3,7 @@ require_once 'includes/config.php';
 require_once 'includes/functions.php';
 require_login();
 
+
 // Get existing settings
 try {
     $pdo = new PDO(
@@ -19,6 +20,10 @@ try {
     $_SESSION['error'] = "Database error: " . $e->getMessage();
     $settings = [];
 }
+
+$vat_stmt = $pdo->prepare("SELECT * FROM vat_settings WHERE user_id = ?");
+$vat_stmt->execute([$_SESSION['user_id']]);
+$vat_settings = $vat_stmt->fetch(PDO::FETCH_ASSOC);
 
 $page_title = 'Business Settings';
 require_once 'includes/header.php';
@@ -246,8 +251,96 @@ require_once 'includes/sidebar.php';
                                         </div>
                                     </div>
                                 </div>
-                            </div>                            
-
+                            </div>
+                            
+                            <div class="card mb-4" id="vat_registered">
+                                <div class="card-header">
+                                    <h5 class="card-title mb-0">VAT Settings</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row g-3">
+                                        <div class="col-12">
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox"
+                                                       name="is_vat_registered" id="isVatRegistered" value="1"
+                                                       <?php echo !empty($vat_settings['is_vat_registered']) ? 'checked' : ''; ?>>
+                                                <label class="form-check-label" for="isVatRegistered">
+                                                    <strong>I am VAT Registered</strong>
+                                                </label>
+                                            </div>
+                                        </div>
+                            
+                                        <div id="vatFields" style="<?php echo empty($vat_settings['is_vat_registered']) ? 'display:none' : ''; ?>">
+                                            <div class="row g-3">
+                                                <div class="col-md-6">
+                                                    <label class="form-label">VAT Number</label>
+                                                    <input type="text" class="form-control" name="vat_number"
+                                                           placeholder="GB123456789"
+                                                           value="<?php echo htmlspecialchars($vat_settings['vat_number'] ?? ''); ?>">
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label">VAT Registration Date</label>
+                                                    <input type="date" class="form-control" name="vat_period_start"
+                                                           value="<?php echo htmlspecialchars($vat_settings['vat_period_start'] ?? ''); ?>">
+                                                    <small class="text-muted">The date you became VAT registered</small>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label">VAT Rate</label>
+                                                    <select class="form-select" name="vat_rate">
+                                                        <option value="20" <?php echo ($vat_settings['vat_rate'] ?? '20') == '20' ? 'selected' : ''; ?>>
+                                                            Standard Rate — 20%
+                                                        </option>
+                                                        <option value="5" <?php echo ($vat_settings['vat_rate'] ?? '') == '5' ? 'selected' : ''; ?>>
+                                                            Reduced Rate — 5%
+                                                        </option>
+                                                        <option value="0" <?php echo ($vat_settings['vat_rate'] ?? '') == '0' ? 'selected' : ''; ?>>
+                                                            Zero Rate — 0%
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label">VAT Scheme</label>
+                                                    <select class="form-select" name="vat_scheme">
+                                                        <option value="standard" <?php echo ($vat_settings['vat_scheme'] ?? 'standard') === 'standard' ? 'selected' : ''; ?>>
+                                                            Standard Accounting
+                                                        </option>
+                                                        <option value="flat_rate" <?php echo ($vat_settings['vat_scheme'] ?? '') === 'flat_rate' ? 'selected' : ''; ?>>
+                                                            Flat Rate Scheme
+                                                        </option>
+                                                        <option value="cash" <?php echo ($vat_settings['vat_scheme'] ?? '') === 'cash' ? 'selected' : ''; ?>>
+                                                            Cash Accounting
+                                                        </option>
+                                                    </select>
+                                                    <small class="text-muted">Not sure? Most small businesses use Standard Accounting</small>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label">VAT Quarter End Month</label>
+                                                    <select class="form-select" name="vat_quarter_end">
+                                                        <option value="Jan" <?php echo ($vat_settings['vat_quarter_end'] ?? '') === 'Jan' ? 'selected' : ''; ?>>
+                                                            Stagger 1 — Jan / Apr / Jul / Oct
+                                                        </option>
+                                                        <option value="Feb" <?php echo ($vat_settings['vat_quarter_end'] ?? '') === 'Feb' ? 'selected' : ''; ?>>
+                                                            Stagger 2 — Feb / May / Aug / Nov
+                                                        </option>
+                                                        <option value="Mar" <?php echo ($vat_settings['vat_quarter_end'] ?? 'Mar') === 'Mar' ? 'selected' : ''; ?>>
+                                                            Stagger 3 — Mar / Jun / Sep / Dec
+                                                        </option>
+                                                    </select>
+                                                    <small class="text-muted">Check your VAT registration certificate if unsure</small>
+                                                </div>
+                                                <div class="col-md-6 d-flex align-items-center">
+                                                    <div class="alert alert-info mb-0 w-100">
+                                                        <i class="fas fa-info-circle me-2"></i>
+                                                        VAT returns are submitted <strong>quarterly</strong> to HMRC. 
+                                                        You have <strong>1 month and 7 days</strong> after each quarter end to file and pay.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
                             <!-- Invoice Settings -->
                             <div class="card mb-4">
                                 <div class="card-header">
@@ -359,5 +452,11 @@ require_once 'includes/sidebar.php';
             </div>
         </div>
     </div>
+    
+<script>
+document.getElementById('isVatRegistered').addEventListener('change', function () {
+    document.getElementById('vatFields').style.display = this.checked ? 'block' : 'none';
+});
+</script>    
 
 <?php require_once 'includes/footer.php'; ?>
