@@ -6,21 +6,50 @@ require_login();
 
 $action = $_REQUEST['action'] ?? '';
 
+// Allowed HMRC categories whitelist — prevents arbitrary values being saved
+$allowed_hmrc_categories = [
+    '',
+    'costOfGoods',
+    'constructionCosts',
+    'staffCosts',
+    'travelCosts',
+    'premisesRunningCosts',
+    'maintenanceCosts',
+    'adminCosts',
+    'advertisingCosts',
+    'businessEntertainmentCosts',
+    'interestOnBankLoans',
+    'financeCharges',
+    'irrecoverableDebts',
+    'professionalFees',
+    'depreciation',
+    'otherExpenses',
+];
+
 switch ($action) {
 
     case 'create':
-        $code        = trim($_POST['code']);
-        $name        = trim($_POST['name']);
-        $type        = $_POST['type'];
-        $description = trim($_POST['description']);
-        $vat_rate    = !empty($_POST['vat_rate']) ? (float) $_POST['vat_rate'] : 0;
+        $code          = trim($_POST['code']);
+        $name          = trim($_POST['name']);
+        $type          = $_POST['type'];
+        $description   = trim($_POST['description']);
+        $vat_rate      = !empty($_POST['vat_rate']) ? (float) $_POST['vat_rate'] : 0;
+        $hmrc_category = $_POST['hmrc_category'] ?? '';
+
+        // Only save hmrc_category for expense accounts, and only if it's a valid value
+        if ($type !== 'expense' || !in_array($hmrc_category, $allowed_hmrc_categories)) {
+            $hmrc_category = null;
+        }
+        if ($hmrc_category === '') {
+            $hmrc_category = null;
+        }
 
         try {
             $stmt = $pdo->prepare("
-                INSERT INTO chart_of_accounts (code, name, type, description, vat_rate) 
-                VALUES (?, ?, ?, ?, ?)
+                INSERT INTO chart_of_accounts (code, name, type, description, vat_rate, hmrc_category) 
+                VALUES (?, ?, ?, ?, ?, ?)
             ");
-            $stmt->execute([$code, $name, $type, $description, $vat_rate]);
+            $stmt->execute([$code, $name, $type, $description, $vat_rate, $hmrc_category]);
             $_SESSION['flash_message'] = ['type' => 'success', 'message' => "Account '$name' created successfully."];
         } catch (PDOException $e) {
             $_SESSION['flash_message'] = ['type' => 'danger', 'message' => 'Error: ' . $e->getMessage()];
@@ -29,26 +58,36 @@ switch ($action) {
         exit;
 
     case 'update':
-        $id          = (int) $_POST['id'];
-        $code        = trim($_POST['code']);
-        $name        = trim($_POST['name']);
-        $type        = $_POST['type'];
-        $description = trim($_POST['description']);
-        $is_active   = isset($_POST['is_active']) ? 1 : 0;
-        $vat_rate    = !empty($_POST['vat_rate']) ? (float) $_POST['vat_rate'] : 0;
+        $id            = (int) $_POST['id'];
+        $code          = trim($_POST['code']);
+        $name          = trim($_POST['name']);
+        $type          = $_POST['type'];
+        $description   = trim($_POST['description']);
+        $is_active     = isset($_POST['is_active']) ? 1 : 0;
+        $vat_rate      = !empty($_POST['vat_rate']) ? (float) $_POST['vat_rate'] : 0;
+        $hmrc_category = $_POST['hmrc_category'] ?? '';
+
+        // Only save hmrc_category for expense accounts, and only if it's a valid value
+        if ($type !== 'expense' || !in_array($hmrc_category, $allowed_hmrc_categories)) {
+            $hmrc_category = null;
+        }
+        if ($hmrc_category === '') {
+            $hmrc_category = null;
+        }
 
         try {
             $stmt = $pdo->prepare("
                 UPDATE chart_of_accounts 
-                SET code        = ?,
-                    name        = ?,
-                    type        = ?,
-                    description = ?,
-                    is_active   = ?,
-                    vat_rate    = ?
+                SET code          = ?,
+                    name          = ?,
+                    type          = ?,
+                    description   = ?,
+                    is_active     = ?,
+                    vat_rate      = ?,
+                    hmrc_category = ?
                 WHERE id = ?
             ");
-            $stmt->execute([$code, $name, $type, $description, $is_active, $vat_rate, $id]);
+            $stmt->execute([$code, $name, $type, $description, $is_active, $vat_rate, $hmrc_category, $id]);
             $_SESSION['flash_message'] = ['type' => 'success', 'message' => "Account updated successfully."];
         } catch (PDOException $e) {
             $_SESSION['flash_message'] = ['type' => 'danger', 'message' => 'Error: ' . $e->getMessage()];

@@ -313,7 +313,7 @@ require_once 'includes/sidebar.php';
                         <h4 class="page-title">Dashboard</h4>
                         <div class="">
                             <ol class="breadcrumb mb-0">
-                                <li class="breadcrumb-item active"><a href="index.php">Dashboard</a></li>
+                                <li class="breadcrumb-item active"><a href="dashboard.php">Dashboard</a></li>
                             </ol>
                         </div>
                     </div>

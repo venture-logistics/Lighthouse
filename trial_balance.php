@@ -185,7 +185,7 @@ require_once 'includes/sidebar.php';
                     <div class="page-title-box d-md-flex justify-content-md-between align-items-center">
                         <h4 class="page-title">Trial Balance</h4>
                         <ol class="breadcrumb mb-0">
-                            <li class="breadcrumb-item"><a href="index.php">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li>
                             <li class="breadcrumb-item active">Trial Balance</li>
                         </ol>
                     </div>

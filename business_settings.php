@@ -25,6 +25,12 @@ $vat_stmt = $pdo->prepare("SELECT * FROM vat_settings WHERE user_id = ?");
 $vat_stmt->execute([$_SESSION['user_id']]);
 $vat_settings = $vat_stmt->fetch(PDO::FETCH_ASSOC);
 
+// Load HMRC connection status
+require_once 'includes/HmrcClient.php';
+$hmrcClient = new HmrcClient($pdo, $_SESSION['user_id']);
+$hmrcTokens = $hmrcClient->getStoredTokens();
+$hmrcConnected = $hmrcClient->isConnected();
+
 $page_title = 'Business Settings';
 require_once 'includes/header.php';
 require_once 'includes/topbar.php';
@@ -39,7 +45,7 @@ require_once 'includes/sidebar.php';
                 <div class="row">
                     <div class="col-sm-12">
                         <div class="page-title-box d-md-flex justify-content-md-between align-items-center">
-                            <h4 class="page-title fw-bold">Business Settings</h4>
+                            <h4 class="page-title fw-bold">Business Settings (Corporation / Ltd)</h4>
                             <div class="">
                                 <ol class="breadcrumb mb-0">
                                     <li class="breadcrumb-item"><a href="index.php">Dashboard</a>
@@ -253,6 +259,41 @@ require_once 'includes/sidebar.php';
                                 </div>
                             </div>
                             
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h5 class="card-title mb-0">HMRC Connection</h5>
+                                </div>
+                                <div class="card-body">
+                                    <?php if ($hmrcConnected): ?>
+                                        <div class="d-flex align-items-center gap-3 mb-3">
+                                            <span class="badge bg-success fs-6">&#10003; Connected</span>
+                                            <?php if (!empty($hmrcTokens['vrn'])): ?>
+                                                <span class="text-muted">VRN: <strong><?php echo htmlspecialchars($hmrcTokens['vrn']); ?></strong></span>
+                                            <?php endif; ?>
+                                            <span class="text-muted">
+                                                Token expires: <strong><?php echo date('d M Y H:i', strtotime($hmrcTokens['token_expires'])); ?></strong>
+                                            </span>
+                                        </div>
+                                        <a href="hmrc/disconnect.php" 
+                                           class="btn btn-danger"
+                                           onclick="return confirm('Are you sure you want to disconnect from HMRC?')">
+                                            Disconnect from HMRC
+                                        </a>
+                                    <?php else: ?>
+                                        <p class="text-muted mb-3">
+                                            Connect to HMRC to submit VAT returns directly from Lighthouse.
+                                        </p>
+                                        <div class="alert alert-warning">
+                                            <i class="fas fa-exclamation-triangle me-2"></i>
+                                            Make sure your VAT number is saved in VAT Settings before connecting.
+                                        </div>
+                                        <a href="hmrc/connect.php" class="btn btn-primary">
+                                            <i class="fas fa-link me-2"></i>Connect to HMRC
+                                        </a>
+                                    <?php endif; ?>
+                                </div>
+                            </div>                            
+
                             <div class="card mb-4" id="vat_registered">
                                 <div class="card-header">
                                     <h5 class="card-title mb-0">VAT Settings</h5>

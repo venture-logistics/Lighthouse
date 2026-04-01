@@ -342,24 +342,22 @@ require_once 'includes/sidebar.php';
                                                                     Fee: £<?php echo number_format($tx['fee'], 2); ?>
                                                                 </div>
                                                             <?php endif; ?>
-                                                        </td>
+                                                        </td>                                                        
                                                         
-                                                        
-<td class="text-end text-nowrap">
-    <?php
-    $vat_rate = (float)($tx['coa_vat_rate'] ?? 0);
-    if ($vat_rate > 0):
-        $vat_amount = round(abs($tx['amount']) * $vat_rate / (100 + $vat_rate), 2);
-    ?>
-        <span class="text-muted small">
-            <?php echo $vat_rate; ?>%<br>
-            £<?php echo number_format($vat_amount, 2); ?>
-        </span>
-    <?php else: ?>
-        <span class="text-muted small">—</span>
-    <?php endif; ?>
-</td>
-                                                        
+                                                        <td class="text-end text-nowrap">
+                                                            <?php
+                                                            $vat_rate = (float)($tx['coa_vat_rate'] ?? 0);
+                                                            if ($vat_rate > 0):
+                                                                $vat_amount = round(abs($tx['amount']) * $vat_rate / (100 + $vat_rate), 2);
+                                                            ?>
+                                                                <span class="text-muted small">
+                                                                    <?php echo $vat_rate; ?>%<br>
+                                                                    £<?php echo number_format($vat_amount, 2); ?>
+                                                                </span>
+                                                            <?php else: ?>
+                                                                <span class="text-muted small">—</span>
+                                                            <?php endif; ?>
+                                                        </td>                                                        
                                                         
                                                         <td>
                                                             <?php if ($tx['coa_name']): ?>

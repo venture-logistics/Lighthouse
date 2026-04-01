@@ -33,6 +33,26 @@ $type_labels = [
     'expense'   => ['label' => 'Expenses',    'badge' => 'warning'],
 ];
 
+// HMRC MTD ITSA allowed expense categories
+$hmrc_categories = [
+    ''                           => '— Not mapped —',
+    'costOfGoods'                => 'Cost of Goods / Materials',
+    'constructionCosts'          => 'Construction Costs',
+    'staffCosts'                 => 'Staff & Employee Costs',
+    'travelCosts'                => 'Travel & Subsistence',
+    'premisesRunningCosts'       => 'Premises Running Costs',
+    'maintenanceCosts'           => 'Repairs & Maintenance',
+    'adminCosts'                 => 'Admin & Office Costs',
+    'advertisingCosts'           => 'Marketing & Advertising',
+    'businessEntertainmentCosts' => 'Business Entertainment',
+    'interestOnBankLoans'        => 'Interest on Bank Loans',
+    'financeCharges'             => 'Finance Charges & Bank Fees',
+    'irrecoverableDebts'         => 'Irrecoverable Debts (Bad Debts)',
+    'professionalFees'           => 'Legal & Professional Fees',
+    'depreciation'               => 'Depreciation',
+    'otherExpenses'              => 'Other Expenses',
+];
+
 $page_title = 'Chart of Accounts';
 require_once 'includes/header.php';
 require_once 'includes/topbar.php';
@@ -49,7 +69,7 @@ require_once 'includes/sidebar.php';
                         <h4 class="page-title">Chart of Accounts</h4>
                         <div class="">
                             <ol class="breadcrumb mb-0">
-                                <li class="breadcrumb-item"><a href="index.php">Dashboard</a></li>
+                                <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li>
                                 <li class="breadcrumb-item active">Chart of Accounts</li>
                             </ol>
                         </div>
@@ -103,6 +123,9 @@ require_once 'includes/sidebar.php';
                                         <th>Code</th>
                                         <th>Account Name</th>
                                         <th>Description</th>
+                                        <?php if ($type === 'expense'): ?>
+                                        <th>HMRC Category</th>
+                                        <?php endif; ?>
                                         <th class="text-center">Active</th>
                                         <th class="text-end">Actions</th>
                                     </tr>
@@ -113,6 +136,19 @@ require_once 'includes/sidebar.php';
                                         <td><code><?php echo htmlspecialchars($account['code']); ?></code></td>
                                         <td><?php echo htmlspecialchars($account['name']); ?></td>
                                         <td class="text-muted small"><?php echo htmlspecialchars($account['description'] ?? ''); ?></td>
+                                        <?php if ($type === 'expense'): ?>
+                                        <td>
+                                            <?php 
+                                            $cat = $account['hmrc_category'] ?? '';
+                                            if ($cat && isset($hmrc_categories[$cat])): ?>
+                                                <span class="badge bg-info text-dark">
+                                                    <?php echo htmlspecialchars($hmrc_categories[$cat]); ?>
+                                                </span>
+                                            <?php else: ?>
+                                                <span class="text-muted small">— not mapped —</span>
+                                            <?php endif; ?>
+                                        </td>
+                                        <?php endif; ?>
                                         <td class="text-center">
                                             <?php if ($account['is_active']): ?>
                                                 <i class="bi bi-check-circle-fill text-success"></i>
@@ -129,6 +165,7 @@ require_once 'includes/sidebar.php';
                                                 data-description="<?php echo htmlspecialchars($account['description'] ?? ''); ?>"
                                                 data-active="<?php echo $account['is_active']; ?>"
                                                 data-vat-rate="<?php echo $account['vat_rate'] ?? 0; ?>"
+                                                data-hmrc-category="<?php echo htmlspecialchars($account['hmrc_category'] ?? ''); ?>"
                                                 data-bs-toggle="modal" data-bs-target="#editAccountModal">
                                                 <i class="bi bi-pencil"></i>
                                             </button>
@@ -179,7 +216,7 @@ require_once 'includes/sidebar.php';
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Account Type</label>
-                        <select class="form-select" name="type" required>
+                        <select class="form-select" name="type" id="new_type" required>
                             <?php foreach ($type_labels as $key => $val): ?>
                             <option value="<?php echo $key; ?>"><?php echo $val['label']; ?></option>
                             <?php endforeach; ?>
@@ -187,16 +224,25 @@ require_once 'includes/sidebar.php';
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Default VAT Rate (%)</label>
-                        <input type="number"
-                               name="vat_rate"
-                               id="new_vat_rate"
-                               class="form-control"
-                               step="0.01"
-                               min="0"
-                               max="100"
-                               value="0"
-                               placeholder="e.g. 20">
+                        <input type="number" name="vat_rate" id="new_vat_rate" class="form-control"
+                               step="0.01" min="0" max="100" value="0" placeholder="e.g. 20">
                         <div class="form-text">Enter 0 for exempt / out of scope</div>
+                    </div>
+                    <!-- HMRC Category — only shown when type = expense -->
+                    <div class="mb-3" id="new_hmrc_category_wrap" style="display:none">
+                        <label class="form-label">
+                            HMRC MTD Category
+                            <span class="text-muted fw-normal">(optional)</span>
+                        </label>
+                        <select class="form-select" name="hmrc_category" id="new_hmrc_category">
+                            <?php foreach ($hmrc_categories as $val => $label): ?>
+                            <option value="<?php echo $val; ?>"><?php echo $label; ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                        <div class="form-text">
+                            Maps this account to an HMRC category for MTD ITSA quarterly submissions.
+                            Leave as "Not mapped" if unsure.
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Description</label>
@@ -242,15 +288,25 @@ require_once 'includes/sidebar.php';
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Default VAT Rate (%)</label>
-                        <input type="number"
-                               name="vat_rate"
-                               id="edit_vat_rate"
-                               class="form-control"
-                               step="0.01"
-                               min="0"
-                               max="100"
-                               placeholder="e.g. 20">
+                        <input type="number" name="vat_rate" id="edit_vat_rate" class="form-control"
+                               step="0.01" min="0" max="100" placeholder="e.g. 20">
                         <div class="form-text">Enter 0 for exempt / out of scope</div>
+                    </div>
+                    <!-- HMRC Category — only shown when type = expense -->
+                    <div class="mb-3" id="edit_hmrc_category_wrap" style="display:none">
+                        <label class="form-label">
+                            HMRC MTD Category
+                            <span class="text-muted fw-normal">(optional)</span>
+                        </label>
+                        <select class="form-select" name="hmrc_category" id="edit_hmrc_category">
+                            <?php foreach ($hmrc_categories as $val => $label): ?>
+                            <option value="<?php echo $val; ?>"><?php echo $label; ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                        <div class="form-text">
+                            Maps this account to an HMRC category for MTD ITSA quarterly submissions.
+                            Leave as "Not mapped" if unsure.
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Description</label>
@@ -294,16 +350,39 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
+    // Show/hide HMRC category in NEW modal based on type selection
+    const newType = document.getElementById('new_type');
+    const newHmrcWrap = document.getElementById('new_hmrc_category_wrap');
+
+    function toggleNewHmrc() {
+        newHmrcWrap.style.display = newType.value === 'expense' ? '' : 'none';
+    }
+    newType.addEventListener('change', toggleNewHmrc);
+    toggleNewHmrc(); // run on load in case expense is default
+
+    // Show/hide HMRC category in EDIT modal based on type selection
+    const editType = document.getElementById('edit_type');
+    const editHmrcWrap = document.getElementById('edit_hmrc_category_wrap');
+
+    function toggleEditHmrc() {
+        editHmrcWrap.style.display = editType.value === 'expense' ? '' : 'none';
+    }
+    editType.addEventListener('change', toggleEditHmrc);
+
     // Populate edit modal
     document.querySelectorAll('.edit-account-btn').forEach(btn => {
         btn.addEventListener('click', function () {
-            document.getElementById('edit_id').value          = this.dataset.id;
-            document.getElementById('edit_code').value        = this.dataset.code;
-            document.getElementById('edit_name').value        = this.dataset.name;
-            document.getElementById('edit_type').value        = this.dataset.type;
-            document.getElementById('edit_description').value = this.dataset.description;
-            document.getElementById('edit_active').checked    = this.dataset.active === '1';
-            document.getElementById('edit_vat_rate').value    = this.dataset.vatRate || 0;
+            document.getElementById('edit_id').value           = this.dataset.id;
+            document.getElementById('edit_code').value         = this.dataset.code;
+            document.getElementById('edit_name').value         = this.dataset.name;
+            document.getElementById('edit_type').value         = this.dataset.type;
+            document.getElementById('edit_description').value  = this.dataset.description;
+            document.getElementById('edit_active').checked     = this.dataset.active === '1';
+            document.getElementById('edit_vat_rate').value     = this.dataset.vatRate || 0;
+            document.getElementById('edit_hmrc_category').value = this.dataset.hmrcCategory || '';
+
+            // Show/hide HMRC field based on this account's type
+            toggleEditHmrc();
         });
     });
 

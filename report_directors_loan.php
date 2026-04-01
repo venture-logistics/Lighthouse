@@ -176,7 +176,7 @@ require_once 'includes/sidebar.php';
                         <h4 class="page-title">Director Loan Account</h4>
                         <div class="">
                             <ol class="breadcrumb mb-0">
-                                <li class="breadcrumb-item"><a href="index.php">Dashboard</a></li>
+                                <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li>
                                 <li class="breadcrumb-item active">Director Loan Account</li>
                             </ol>
                         </div>

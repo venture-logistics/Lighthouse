@@ -19,8 +19,8 @@ $company_name = $stmt->fetchColumn();
                     <p class="mb-0">&copy; <?php echo date("Y"); ?> <?php echo $company_name; ?></p>
                 </div>
                 <div class="col-md-6 text-center text-md-end">
-                    <a target="_blank" href="https://video.lighthousefinance.io/" class="text-decoration-none me-3">Video Guides</a>
-                    <a target="_blank" href="https://support.lighthousefinance.io/" class="text-decoration-none me-3">Get Support</a>
+                    <a target="_blank" href="https://video.lighthousefinance.io" class="text-decoration-none me-3">Video Guides</a>
+                    <a target="_blank" href="https://support.lighthousefinance.io" class="text-decoration-none me-3">Get Support</a>
                 </div>
             </div>
         </div>

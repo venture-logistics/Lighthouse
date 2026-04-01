@@ -23,7 +23,7 @@ try {
     <div class="startbar d-print-none">
         <!--start brand-->
         <div class="brand">
-            <a href="index.php" class="logo">
+            <a href="dashboard.php" class="logo">
             <?php
 
             if ($logoPath && file_exists($logoPath)) { ?>
@@ -60,6 +60,12 @@ try {
                             </li>
                         <?php endif; ?>
                         <li class="nav-item">
+                            <a class="nav-link" href="latest_news.php">
+                                <i class="iconoir-code menu-icon"></i>
+                                <span>Latest News</span>
+                            </a>
+                        </li><!--end nav-item-->
+                        <li class="nav-item">
                             <a class="nav-link" href="dashboard.php">
                                 <i class="iconoir-presentation menu-icon"></i>
                                 <span>Dashboard</span>
@@ -80,10 +86,21 @@ try {
                             </div><!--end startbarTables-->
                         </li><!--end nav-item-->
                         <li class="nav-item">
-                            <a class="nav-link" href="business_settings.php">
+                            <a class="nav-link" href="#sidebarBusinessSettings" data-bs-toggle="collapse" role="button"
+                                aria-expanded="false" aria-controls="sidebarBusinessSettings">
                                 <i class="iconoir-report-columns menu-icon"></i>
                                 <span>Business Settings</span>
                             </a>
+                            <div class="collapse " id="sidebarBusinessSettings">
+                                <ul class="nav flex-column">
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="business_settings.php">Ltd Company</a>
+                                    </li><!--end nav-item-->
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="sole_trader_settings.php">Sole Trader</a>
+                                    </li>
+                                </ul><!--end nav-->
+                            </div><!--end startbarTables-->
                         </li><!--end nav-item-->
                         <li class="nav-item">
                             <a class="nav-link" href="system_settings.php">
@@ -242,7 +259,7 @@ try {
                                 <i class="iconoir-hand-card menu-icon"></i>
                                 <span>VAT Return</span>
                             </a>
-                        </li><!--end nav-item-->                        
+                        </li><!--end nav-item-->
                     </ul><!--end navbar-nav--->
                 </div>
             </div><!--end startbar-collapse-->

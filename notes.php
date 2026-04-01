@@ -1,7 +1,7 @@
 <?php
 require_once 'includes/config.php';
 require_once 'includes/functions.php';
-require_login();
+$page_title = 'Notes';
 
 try {
     $pdo = new PDO(
@@ -21,7 +21,6 @@ try {
 $stmt = $pdo->query("SELECT id, title, content, created_at, updated_at FROM notes ORDER BY created_at DESC");
 $notes = $stmt->fetchAll();
 
-$page_title = 'Notes';
 require_once 'includes/header.php';
 require_once 'includes/topbar.php';
 require_once 'includes/sidebar.php';
@@ -36,7 +35,7 @@ require_once 'includes/sidebar.php';
                         <h4 class="page-title">Notes</h4>
                         <div class="">
                             <ol class="breadcrumb mb-0">
-                                <li class="breadcrumb-item"><a href="index.php">Dashboard</a></li>
+                                <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li>
                                 <li class="breadcrumb-item active">Notes</li>
                             </ol>
                         </div>

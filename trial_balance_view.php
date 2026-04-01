@@ -60,7 +60,7 @@ require_once 'includes/sidebar.php';
                     <div class="page-title-box d-md-flex justify-content-md-between align-items-center">
                         <h4 class="page-title"><?php echo htmlspecialchars($tb['label']); ?></h4>
                         <ol class="breadcrumb mb-0">
-                            <li class="breadcrumb-item"><a href="index.php">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li>
                             <li class="breadcrumb-item"><a href="trial_balance.php">Trial Balance</a></li>
                             <li class="breadcrumb-item active">View</li>
                         </ol>

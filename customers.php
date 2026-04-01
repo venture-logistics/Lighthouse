@@ -33,7 +33,7 @@ try {
                             <h4 class="page-title">Customers</h4>
                             <div class="">
                                 <ol class="breadcrumb mb-0">
-                                    <li class="breadcrumb-item"><a href="index.php">Dashboard</a>
+                                    <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a>
                                     </li><!--end nav-item-->
                                     <li class="breadcrumb-item active">Customers</li>
                                 </ol>

@@ -136,3 +136,43 @@ function format_date($date, $options = 'Y-m-d')
         return '';
     }
 }
+
+// Submit VAT Return
+function refresh_hmrc_token(PDO $pdo, array $token): ?array {
+    $ch = curl_init('https://test-api.service.hmrc.gov.uk/oauth/token');
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST           => true,
+        CURLOPT_POSTFIELDS     => http_build_query([
+            'grant_type'    => 'refresh_token',
+            'client_id'     => HMRC_CLIENT_ID,
+            'client_secret' => HMRC_CLIENT_SECRET,
+            'refresh_token' => $token['refresh_token'],
+        ]),
+        CURLOPT_HTTPHEADER => ['Content-Type: application/x-www-form-urlencoded'],
+    ]);
+
+    $response = curl_exec($ch);
+    curl_close($ch);
+    $data = json_decode($response, true);
+
+    if (empty($data['access_token'])) return null;
+
+    $expires_at = date('Y-m-d H:i:s', time() + $data['expires_in']);
+
+    $stmt = $pdo->prepare("
+        UPDATE hmrc_tokens 
+        SET access_token = ?, refresh_token = ?, token_expires = ?
+        WHERE user_id = ?
+    ");
+    $stmt->execute([
+        $data['access_token'],
+        $data['refresh_token'] ?? $token['refresh_token'],
+        $expires_at,
+        $token['user_id'],
+    ]);
+
+    $token['access_token']  = $data['access_token'];
+    $token['token_expires'] = $expires_at;
+    return $token;
+}
