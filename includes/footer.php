@@ -1,6 +1,4 @@
 
-
-
 <?php
 
 $stmt = $pdo->prepare("SELECT company_name FROM business_settings");
@@ -8,9 +6,6 @@ $stmt->execute();
 $company_name = $stmt->fetchColumn();
 
 ?>
-
-
-
 
      <footer class="bg-light py-4 mt-auto">
         <div class="container">
@@ -28,7 +23,10 @@ $company_name = $stmt->fetchColumn();
   
 
     <!-- Bootstrap 5 JS Bundle with Popper -->
-    <script src="assets/js/jquery.min.js"></script>
+    <script 
+      src="https://jquery.com" 
+      integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" 
+      crossorigin="anonymous"></script>
     <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="assets/libs/simplebar/simplebar.min.js"></script>
 

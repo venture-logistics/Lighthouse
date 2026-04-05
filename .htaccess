@@ -1,0 +1,10 @@
+<IfModule mod_headers.c>
+    # Modern protection
+    Header always set Content-Security-Policy "default-src 'self'; frame-ancestors 'none';"
+    
+    # Legacy protection for ZAP/Older Browsers
+    Header always set X-Frame-Options "DENY"
+    
+    # Bonus: Prevents browsers from "guessing" file types (MIME-sniffing)
+    Header always set X-Content-Type-Options "nosniff"
+</IfModule>

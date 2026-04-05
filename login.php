@@ -36,6 +36,7 @@ require_once 'includes/sidebar.php';
                                             <?php echo display_message(); ?>
                     
                                             <form action="process_login.php" method="post">
+                                                <input type="hidden" name="CSRFP_TOKEN" value="<?php echo $_SESSION['csrfp_token'][0] ?? ''; ?>">
                                                 <div class="mb-3">
                                                     <label for="username" class="form-label">Username</label>
                                                     <input type="text" class="form-control" id="username" name="username" required>

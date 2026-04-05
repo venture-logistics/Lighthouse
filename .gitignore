@@ -1,5 +1,6 @@
 .vs
+.git
 .env
+.gitignore
 includes/licence.json
-
 includes/config.php
